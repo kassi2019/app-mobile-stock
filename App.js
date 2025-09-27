@@ -1,20 +1,19 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { Provider } from "react-redux"; 
+import { store } from "./src/store/store";  // Assure-toi que le chemin est correct
+import { AppNavigation } from "./src/navigation/AppNavigation";
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
+import Toast from "react-native-toast-message";
+import { toastConfig } from "./src/composantGlobal/toast"; 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <NavigationContainer>
+        <AppNavigation />
+        <Toast config={toastConfig} />
+      </NavigationContainer>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
