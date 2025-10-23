@@ -60,6 +60,40 @@ const login = createSlice({
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(logoutThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.access_token = action.payload.access_token;
+        AsyncStorage.removeItem("access_token", action.payload.access_token);
+        AsyncStorage.removeItem("user", JSON.stringify(action.payload.user));
+
+       
+      })
+
+      .addCase(logoutThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(informationUtilisateur.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(informationUtilisateur.fulfilled, (state, action) => {
+        state.loading = false;
+        state.stateAllUtilisateur = action.payload.data || action.payload;
+
+        // Adjust based on your API response structure
+      })
+      .addCase(informationUtilisateur.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.data;
       });
   },
 });

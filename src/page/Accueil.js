@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -8,23 +8,83 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useDispatch } from "react-redux";
+import { informationUtilisateur, logoutThunk } from "../service/loginService";
+import { useDispatch, useSelector } from "react-redux";
+import { CommonActions,useRoute } from "@react-navigation/native";
 //import { logout } from "../store/authSlice"; // <-- ton slice Redux
 
 const statCards = [
-  { number: 120, label: "Scanner Produit Entrant", color: "#1E40AF" },
-  { number: 5, label: "Scanner Produit Sortant", color: "#10B981" },
-  { number: 30, label: "Stock Initial", color: "#F59E0B" },
-  { number: 18, label: "Stock Actuel", color: "#EF4444" },
-  { number: 30, label: "Produits Expiré", color: "#F59E0B" },
-  { number: 18, label: "Produit en Rupture", color: "#EF4444" },
-  // { number: 30, label: "Produits", color: "#F59E0B" },
-  // { number: 18, label: "Stock bas", color: "#EF4444" },
+  {
+    number: 12,
+    label: "Scanne Magasinier",
+    color: "#F59E0B",
+    icon: "📦", // boîte / stock
+  },
+  {
+    number: 5,
+    label: "Scanne Caissier",
+    color: "#045d18ff",
+    icon: "💵", // argent / caisse
+  },
+  // {
+  //   number: 30,
+  //   label: "Stock Initial",
+  //   color: "#F59E0B",
+  //   icon: "📋", // liste de contrôle
+  // },
+  // {
+  //   number: 18,
+  //   label: "Stock Actuel",
+  //   color: "#EF4444",
+  //   icon: "📊", // graphique
+  // },
+  // {
+  //   number: 10,
+  //   label: "Produits Expirés",
+  //   color: "#F59E0B",
+  //   icon: "⏳", // sablier / expiration
+  // },
+  // {
+  //   number: 7,
+  //   label: "Produits en Rupture",
+  //   color: "#EF4444",
+  //   icon: "❌", // indisponible / rupture
+  // },
+  // {
+  //   number: 50,
+  //   label: "Produits",
+  //   color: "#F59E0B",
+  //   icon: "🛒", // panier / produits
+  // },
+  // {
+  //   number: 4,
+  //   label: "Stock Bas",
+  //   color: "#EF4444",
+  //   icon: "⚠️", // attention / stock faible
+  // },
 ];
 
 export function Accueil({ navigation }) {
   const dispatch = useDispatch();
+  const { stateAllUtilisateur } = useSelector((state) => state.logins); // récupère l'utilisateur connecté
+  const route = useRoute();
+  // const role = user?.role; // "admin" ou "caissier"
 
+  // console.log({ user });
+  useEffect(() => {
+    dispatch(informationUtilisateur());
+
+     if (route.params?.refresh) {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "Accueil" }],
+        })
+      );
+    }
+  }, [dispatch]);
+
+  // console.log(stateAllUtilisateur?.role?.id);
   const handleLogout = () => {
     Alert.alert("Déconnexion", "Voulez-vous vraiment vous déconnecter ?", [
       { text: "Annuler", style: "cancel" },
@@ -32,13 +92,11 @@ export function Accueil({ navigation }) {
         text: "Oui",
         style: "destructive",
         onPress: () => {
-          dispatch(logout());
-          navigation.replace("Login"); // retour page login
+          dispatch(logoutThunk());
         },
       },
     ]);
   };
-
   const renderProduit = ({ item }) => {
     let statut = "En stock";
     let couleur = "green";
@@ -64,16 +122,17 @@ export function Accueil({ navigation }) {
     <View style={styles.container}>
       {/* En-tête */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Tableau de bord</Text>
+        <Text style={styles.headerTitle}>Application de Scanne code barre</Text>
         <TouchableOpacity onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={26} color="white" />
         </TouchableOpacity>
       </View>
 
       {/* Statistiques */}
-      <Text style={styles.sectionTitle}>Produits récents</Text>
-      <View style={styles.statsContainer}>
+      {/* <Text style={styles.sectionTitle}>Produits récents</Text> */}
+      {/* <View style={styles.statsContainer}>
         {statCards.map((item, index) => (
+          
           <TouchableOpacity
             key={index}
             style={[
@@ -95,28 +154,96 @@ export function Accueil({ navigation }) {
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </View> */}
+      <View style={styles.container}>
+        {/* En-tête */}
 
+        {/* Cartes */}
+        <View style={styles.statsContainer}>
+          {statCards.map((item, index) => {
+            const isDisabled =
+              (stateAllUtilisateur?.role?.id === 3 && index === 1) ||
+              (stateAllUtilisateur?.role?.id === 2 && index === 0);
+
+            return (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.statCard,
+                  { borderColor: item.color, borderWidth: 2 },
+                  isDisabled && styles.disabledCard,
+                ]}
+                disabled={isDisabled}
+                onPress={() => {
+                  if (index === 0) {
+                    navigation.navigate("Scanner-Administrateur");
+                  } else {
+                    navigation.navigate("Scanner-Caissier");
+                  }
+                }}
+              >
+                <Text style={{ marginRight: 5, fontSize: 40 }}>
+                  {item.icon}
+                </Text>
+
+                <Text
+                  style={[
+                    styles.statLabel,
+                    isDisabled && { color: "#9CA3AF" },
+                  ]}
+                  numberOfLines={2}
+                >
+                  {/* Affichage de l'icône devant le label */}
+
+                  {item.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
       {/* Bouton flottant */}
-      <TouchableOpacity style={styles.fab}>
+      {/* <TouchableOpacity style={styles.fab}>
         <Ionicons name="add" size={28} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // statsContainer: {
+  //   flexDirection: "row",
+  //   flexWrap: "wrap", // permet d’aller à la ligne suivante
+  //   justifyContent: "space-around", // espace entre les cartes
+  //   marginVertical: 15,
+  //   gap: 15, // si RN >= 0.71
+  // },
+  // statCard: {
+  //   backgroundColor: "white",
+  //   width: "46%", // deux cartes par ligne
+  //   aspectRatio: 1, // carrée
+  //   borderRadius: 12,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   shadowColor: "#000",
+  //   shadowOpacity: 0.1,
+  //   shadowRadius: 4,
+  //   elevation: 3,
+  //   marginVertical: 8, // petit espace entre les lignes
+  // },
+
   statsContainer: {
     flexDirection: "row",
-    flexWrap: "wrap", // permet d’aller à la ligne suivante
-    justifyContent: "space-around", // espace entre les cartes
+    marginTop: 250,
+    flexWrap: "wrap",
+    justifyContent: "space-around", // centre les cartes au milieu
     marginVertical: 15,
-    gap: 15, // si RN >= 0.71
+    gap: 15, // fonctionne si RN >= 0.71
   },
   statCard: {
     backgroundColor: "white",
-    width: "46%", // deux cartes par ligne
-    aspectRatio: 1, // carrée
+    width: "40%", // réduit un peu pour qu’elles soient bien centrées
+    aspectRatio: 1,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -124,15 +251,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    marginVertical: 8, // petit espace entre les lignes
+    margin: 8, // petit espace autour
   },
+
   statNumber: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#1E40AF",
   },
   statLabel: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#6B7280",
     textAlign: "center",
     flexShrink: 1,
@@ -157,7 +285,7 @@ const styles = StyleSheet.create({
 
   statNumber: { fontSize: 18, fontWeight: "bold", color: "#1E40AF" },
   statLabel: {
-    fontSize: 16,
+    fontSize: 20,
     color: "#6B7280",
     textAlign: "center", // centre horizontalement le texte
     flexShrink: 1, // ajuste le texte si trop long

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   detailProduitParCodeBarre,
   ajouterProduitTemporellement,
@@ -23,7 +23,7 @@ export function BarreCodeCaissier() {
   const [scanning, setScanning] = useState(false);
   const [scanned, setScanned] = useState(false);
   const [dataCodeBarre, setDataCodeBarre] = useState("");
-
+  const { stateAllUtilisateur } = useSelector((state) => state.logins);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -115,8 +115,11 @@ export function BarreCodeCaissier() {
               setScanning(true);
               setScanned(false);
             }}
+            disabled={
+              stateAllUtilisateur?.role?.id !== 2
+            }
           >
-            <Text style={styles.buttonText}>📷 Scanner</Text>
+              <Text style={styles.buttonText}>📷 Scanner</Text>
           </TouchableOpacity>
         </View>
       )}
