@@ -4,7 +4,7 @@ import {
   verificationCodeProduit,
   detailProduitParCodeBarre,
   nombreLotProduitParCodeBarre,
-  quantiteActuelProduitParCodeBarre
+  quantiteActuelProduitParCodeBarre,
 } from "../../service/produitService";
 const initialState = {
   produit: [],
@@ -34,19 +34,19 @@ const produit = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-    //  .addCase(verificationCodeProduit.pending, (state) => {
-    //     state.loading = true;
-    //   })
-    //   .addCase(verificationCodeProduit.fulfilled, (state, action) => {
-    //     state.loading = false;
-    //     state.stateVerificationProduit = action.payload; // ✅ stocker la réponse
-    //   })
-    //   .addCase(verificationCodeProduit.rejected, (state, action) => {
-    //     state.loading = false;
-    //     state.error = action.payload;
-    //   })
-    
-    .addCase(detailProduitParCodeBarre.pending, (state) => {
+      //  .addCase(verificationCodeProduit.pending, (state) => {
+      //     state.loading = true;
+      //   })
+      //   .addCase(verificationCodeProduit.fulfilled, (state, action) => {
+      //     state.loading = false;
+      //     state.stateVerificationProduit = action.payload; // ✅ stocker la réponse
+      //   })
+      //   .addCase(verificationCodeProduit.rejected, (state, action) => {
+      //     state.loading = false;
+      //     state.error = action.payload;
+      //   })
+
+      .addCase(detailProduitParCodeBarre.pending, (state) => {
         state.loading = true;
       })
       .addCase(detailProduitParCodeBarre.fulfilled, (state, action) => {
@@ -57,8 +57,8 @@ const produit = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-    
-    .addCase(nombreLotProduitParCodeBarre.pending, (state) => {
+
+      .addCase(nombreLotProduitParCodeBarre.pending, (state) => {
         state.loading = true;
       })
       .addCase(nombreLotProduitParCodeBarre.fulfilled, (state, action) => {
@@ -69,9 +69,8 @@ const produit = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-    
-    
-    .addCase(quantiteActuelProduitParCodeBarre.pending, (state) => {
+
+      .addCase(quantiteActuelProduitParCodeBarre.pending, (state) => {
         state.loading = true;
       })
       .addCase(quantiteActuelProduitParCodeBarre.fulfilled, (state, action) => {
@@ -81,8 +80,7 @@ const produit = createSlice({
       .addCase(quantiteActuelProduitParCodeBarre.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
-    
+      });
   },
 });
 

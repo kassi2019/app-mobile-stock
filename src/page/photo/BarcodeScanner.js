@@ -39,7 +39,7 @@ export function BarcodeScanner() {
   const [scanned, setScanned] = useState(false);
   const dispatch = useDispatch();
   const [dataCodeBarre, setDataCodeBarre] = useState("");
-  const [codeProduit, setCodeProduit] = useState("");
+  const [codeProduit, setCodeProduit] = useState("P-");
   const [libelle, setLibelleProduit] = useState("");
   const [prixUnitaire, setPrixUnitaire] = useState("0");
   const [codeLot, setCodeLot] = useState("");
@@ -138,7 +138,7 @@ export function BarcodeScanner() {
   }
   const CodeLotProduit =
     "LOT" + "-" + "000000" + (parseInt(stateNombreLotProduit) + 1);
-
+  const CodeProd = "P" + "-" + codeProduit;
   const totalQuantite =
     parseInt(stateQuantiteActuelProduit) + parseInt(quantiteLot1);
 
@@ -174,7 +174,7 @@ export function BarcodeScanner() {
     try {
       await dispatch(
         enregistrerQuantiteProduit({
-          codeProd: codeProduit,
+          codeProd: CodeProd,
           codeBarre: dataCodeBarre,
           data: formData,
         })
@@ -282,7 +282,7 @@ export function BarcodeScanner() {
               </View>
 
               <View style={styles.col}>
-                <Text style={styles.label}>Qté Actuel produit (B)</Text>
+                <Text style={styles.label}>Qté Disponible (B)</Text>
                 <TextInput
                   style={[styles.input, { backgroundColor: "#E5E7EB" }]}
                   //placeholder="Quantité Actuel du lot"
@@ -397,9 +397,7 @@ export function BarcodeScanner() {
               setScanning(true);
               setScanned(false);
             }}
-            disabled={
-              stateAllUtilisateur?.role?.id !== 3
-            }
+            disabled={stateAllUtilisateur?.role?.id !== 3}
           >
             <Text style={styles.buttonText}>📷 Scanner</Text>
           </TouchableOpacity>
