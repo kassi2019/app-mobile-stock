@@ -28,12 +28,12 @@ export function Login({ navigation }) {
 
   const handleLogin = () => {
     if (!validateInput(matricule)) {
-       messageErreur(`Veuillez entrer un matricule valide`);
+      messageErreur(`Veuillez entrer un matricule valide`);
       //Alert.alert("Erreur", "Veuillez entrer un matricule valide");
       return;
     }
     if (password.length < 4) {
-     // Alert.alert("Erreur", "Mot de passe trop court");
+      // Alert.alert("Erreur", "Mot de passe trop court");
       messageErreur(`Mot de passe trop court`);
       return;
     }
@@ -47,7 +47,7 @@ export function Login({ navigation }) {
       })
       .catch((err) => {
         setLoading(false);
-         messageErreur(`Matricule ou mot de passe incorrect`, err);
+        messageErreur(`Matricule ou mot de passe incorrect`, err);
         // const msg =
         //   typeof err === "string"
         //     ? err
