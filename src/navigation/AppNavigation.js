@@ -28,48 +28,78 @@ const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
 // ✅ Déconnexion avec confirmation, loader et redirection automatique
-function DeconnexionScreen() {
-  const dispatch = useDispatch();
-  const navigation = useNavigation();
-  const access_token = useSelector((state) => state.logins?.access_token);
-  const [loading, setLoading] = React.useState(false);
-  const { stateAllUtilisateur } = useSelector((state) => state.logins);
+// function DeconnexionScreen() {
+//   const dispatch = useDispatch();
+//   const navigation = useNavigation();
+//   const access_token = useSelector((state) => state.logins?.access_token);
+//   const [loading, setLoading] = React.useState(false);
+//   const { stateAllUtilisateur } = useSelector((state) => state.logins);
 
-  useEffect(() => {
-    Alert.alert(
-      "Déconnexion",
-      "Voulez-vous vraiment vous déconnecter ?",
-      [
-        {
-          text: "Annuler",
-          style: "cancel",
-          onPress: () => {
-            // Retour à l'accueil si annulation
-            navigation.navigate("Accueil");
-            navigation.navigate("Accueil", { refresh: Date.now() });
-          },
-        },
-        {
-          text: "Oui",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await dispatch(logoutThunk());
-              // Après logout, redirige vers Login ou page publique
-              navigation.replace("Login");
-            } catch (err) {
-              console.error(err);
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
-  }, [dispatch, navigation]);
+//   useEffect(() => {
+//     Alert.alert(
+//       "Déconnexion",
+//       "Voulez-vous vraiment vous déconnecter ?",
+//       [
+//         {
+//           text: "Annuler",
+//           style: "cancel",
+//           onPress: () => {
+//             // Retour à l'accueil si annulation
+//             navigation.navigate("Accueil");
+//             navigation.navigate("Accueil", { refresh: Date.now() });
+//           },
+//         },
+//         {
+//           text: "Oui",
+//           style: "destructive",
+//           onPress: async () => {
+//             try {
+//               await dispatch(logoutThunk());
+//               // Après logout, redirige vers Login ou page publique
+//               navigation.replace("Login");
+//             } catch (err) {
+//               console.error(err);
+//             }
+//           },
+//         },
+//       ],
+//       { cancelable: false }
+//     );
+//   }, [dispatch, navigation]);
 
  
-}
+// }
+// function DeconnexionScreen() {
+//   const dispatch = useDispatch();
+//   const navigation = useNavigation();
 
+//   useEffect(() => {
+//     Alert.alert(
+//       "Déconnexion",
+//       "Voulez-vous vraiment vous déconnecter ?",
+//       [
+//         {
+//           text: "Annuler",
+//           style: "cancel",
+//           onPress: () => navigation.navigate("Accueil"),
+          
+//         },
+//         {
+//           text: "Oui",
+//           style: "destructive",
+//           onPress: async () => {
+//             await dispatch(logoutThunk());
+//             // ❌ PAS de navigation ici !
+//             // Quand access_token = null → AppNavigation affiche Login automatiquement
+//           },
+//         },
+//       ],
+//       { cancelable: false }
+//     );
+//   }, [dispatch, navigation]);
+
+//   return <View />; // peut retourner une vue vide ou un loader
+// }
 // ✅ Contenu personnalisé du Drawer (photo + nom utilisateur)
 function CustomDrawerContent(props) {
   const { stateAllUtilisateur } = useSelector((state) => state.logins);
@@ -77,8 +107,6 @@ function CustomDrawerContent(props) {
   const photoSrc = stateAllUtilisateur?.photoUrl
     ? `${api.defaults.baseURL}${stateAllUtilisateur.photoUrl}`
     : "../../assets/icon.png";
-
-  console.log(photoSrc);
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.drawerHeader}>
@@ -127,7 +155,7 @@ function DrawerNavigation() {
       {/* <Drawer.Screen name="Catégories" component={CategorieProduit} /> */}
       <Drawer.Screen name="Scanner-Administrateur" component={BarcodeScanner} />
       <Drawer.Screen name="Scanner-Caissier" component={BarreCodeCaissier} />
-      <Drawer.Screen name="Déconnexion" component={DeconnexionScreen} />
+      {/* <Drawer.Screen name="Déconnexion" component={DeconnexionScreen} /> */}
     </Drawer.Navigator>
   );
 }

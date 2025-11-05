@@ -10,7 +10,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { informationUtilisateur, logoutThunk } from "../service/loginService";
 import { useDispatch, useSelector } from "react-redux";
-import { CommonActions,useRoute } from "@react-navigation/native";
+import { CommonActions, useRoute } from "@react-navigation/native";
 //import { logout } from "../store/authSlice"; // <-- ton slice Redux
 
 const statCards = [
@@ -74,7 +74,7 @@ export function Accueil({ navigation }) {
   useEffect(() => {
     dispatch(informationUtilisateur());
 
-     if (route.params?.refresh) {
+    if (route.params?.refresh) {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
@@ -85,18 +85,20 @@ export function Accueil({ navigation }) {
   }, [dispatch]);
 
   // console.log(stateAllUtilisateur?.role?.id);
-  const handleLogout = () => {
-    Alert.alert("Déconnexion", "Voulez-vous vraiment vous déconnecter ?", [
-      { text: "Annuler", style: "cancel" },
-      {
-        text: "Oui",
-        style: "destructive",
-        onPress: () => {
-          dispatch(logoutThunk());
-        },
+const handleLogout = () => {
+  Alert.alert("Déconnexion", "Voulez-vous vraiment vous déconnecter ?", [
+    { text: "Annuler", style: "cancel" },
+    {
+      text: "Oui",
+      style: "destructive",
+      onPress: async () => {
+        await dispatch(logoutThunk());
+        // ❌ Ne pas faire de navigation manuelle ici !
+        // Le Stack va se recharger automatiquement car access_token devient null
       },
-    ]);
-  };
+    },
+  ]);
+};
   const renderProduit = ({ item }) => {
     let statut = "En stock";
     let couleur = "green";
@@ -187,10 +189,7 @@ export function Accueil({ navigation }) {
                 </Text>
 
                 <Text
-                  style={[
-                    styles.statLabel,
-                    isDisabled && { color: "#9CA3AF" },
-                  ]}
+                  style={[styles.statLabel, isDisabled && { color: "#9CA3AF" }]}
                   numberOfLines={2}
                 >
                   {/* Affichage de l'icône devant le label */}

@@ -57,7 +57,7 @@ export function BarreCodeCaissier() {
       // const formData = {
       //   produit_id: produit.id,
       // };
-
+      //alert(codeBarre);
       // 3️⃣ Enregistrer directement en base
       await dispatch(
         ajouterProduitTemporellement({
@@ -115,11 +115,9 @@ export function BarreCodeCaissier() {
               setScanning(true);
               setScanned(false);
             }}
-            disabled={
-              stateAllUtilisateur?.role?.id !== 2
-            }
+            disabled={stateAllUtilisateur?.role?.id !== 2}
           >
-              <Text style={styles.buttonText}>📷 Scanner</Text>
+            <Text style={styles.buttonText}>📷 Scanner</Text>
           </TouchableOpacity>
         </View>
       )}

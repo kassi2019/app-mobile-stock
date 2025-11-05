@@ -103,15 +103,19 @@ export const enregistrerQuantiteProduit = createAsyncThunk(
 
 export const ajouterProduitTemporellement = createAsyncThunk(
   "temporel/temporel",
-  async ({codeBarre}, thunkAPI) => {
+ 
+  async ({ codeBarre }, thunkAPI) => {
+
     try {
+    
+       
       // tu peux utiliser GET ou POST selon ton API
       const res = await api.post(
         `/produit/ajouterProduitTemporel/${codeBarre}`
       );
-
       return res.data;
     } catch (err) {
+      alert(err);
       return thunkAPI.rejectWithValue(
         err.response?.data || "Erreur lors de l'enregistrement du produit"
       );

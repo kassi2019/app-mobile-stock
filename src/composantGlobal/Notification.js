@@ -20,7 +20,14 @@ export const messageErreur = (message) => {
     text1: "Erreur ❌",
     text2: message,
     position: "top",
+    topOffset: 50, // espace depuis le haut
     visibilityTime: 7000,
+    props: {
+      style: {
+        alignSelf: "flex-end", // décalage vers la droite
+        marginRight: 20, // un peu d'espace du bord droit
+      },
+    },
   });
 };
 

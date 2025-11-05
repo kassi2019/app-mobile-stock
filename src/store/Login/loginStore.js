@@ -2,13 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   loginThunk,
   logoutThunk,
-  fetchUserProfile,
-  updateUserProfile,
-  changeUserPassword,
   uploadProfilePhotoThunk,
   informationUtilisateur,
 } from "../../service/loginService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const initialState = {
   status: "idle",
   error: null,
@@ -20,15 +18,15 @@ const initialState = {
   stateAllUtilisateur: [],
 };
 
-const login = createSlice({
-  name: "login",
+const authSlice = createSlice({
+  name: "auth",
   initialState,
   reducers: {
-    logout(state) {
+    clearUser: (state) => {
       state.access_token = null;
       state.user = null;
-      AsyncStorage.remove("access_token");
-      AsyncStorage.remove("user");
+      AsyncStorage.removeItem("access_token");
+      AsyncStorage.removeItem("user");
     },
     clearMessages: (state) => {
       state.error = null;
@@ -38,6 +36,7 @@ const login = createSlice({
 
   extraReducers: (builder) => {
     builder
+      // 🔐 LOGIN
       .addCase(loginThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -49,38 +48,27 @@ const login = createSlice({
         AsyncStorage.setItem("access_token", action.payload.access_token);
         AsyncStorage.setItem("user", JSON.stringify(action.payload.user));
       })
-      // .addCase(loginThunk.fulfilled, (state, action) => {
-      //   state.loading = false;
-      //   console.log("Bonjours",action.payload);
-      //   // state.access_token = action.payload.access_token;
-      //   // localStorage.setItem("access_token", action.payload.access_token);
-      //   // state.user = action.payload.user;
-      //   // localStorage.setItem("user", JSON.stringify(action.payload.user));
-      // })
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
+      // 🚪 LOGOUT
       .addCase(logoutThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(logoutThunk.fulfilled, (state, action) => {
+      .addCase(logoutThunk.fulfilled, (state) => {
         state.loading = false;
-        state.user = action.payload.user;
-        state.access_token = action.payload.access_token;
-        AsyncStorage.removeItem("access_token", action.payload.access_token);
-        AsyncStorage.removeItem("user", JSON.stringify(action.payload.user));
-
-       
+        state.user = null;
+        state.access_token = null;
       })
-
       .addCase(logoutThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
 
+      // 👤 INFO UTILISATEUR
       .addCase(informationUtilisateur.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -88,15 +76,13 @@ const login = createSlice({
       .addCase(informationUtilisateur.fulfilled, (state, action) => {
         state.loading = false;
         state.stateAllUtilisateur = action.payload.data || action.payload;
-
-        // Adjust based on your API response structure
       })
       .addCase(informationUtilisateur.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.data;
+        state.error = action.payload;
       });
   },
 });
 
-export const { logout, clearMessages } = login.actions;
-export default login.reducer;
+export const { clearUser, clearMessages } = authSlice.actions;
+export default authSlice.reducer;
